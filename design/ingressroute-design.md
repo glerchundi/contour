@@ -73,6 +73,29 @@ spec:
       # required, the name of a secret in the current namespace
       secretName: google-tls
       # other properties like cipher suites may be added later
+    # if present describes the CORS policy.
+    cors:
+      # Specifies the origins that will be allowed to do CORS requests.
+      allowOrigin:
+        - www.google.com
+        - google.com
+      # Specifies the content for the *access-control-allow-methods*
+      # header.
+      allowMethods:
+        - GET
+        - POST
+      # Specifies the content for the *access-control-allow-headers*
+      # header.
+      allowHeaders:
+        - Content-Type
+      # Specifies the content for the *access-control-expose-headers*
+      # header.
+      exposeHeaders:
+        - Content-Type
+      # Specifies the content for the *access-control-max-age* header.
+      maxAge: 24h
+      # Specifies whether the resource allows credentials.
+      allowCredentials: true
   strategy: RoundRobin # (Optional) LB Algorithm to apply to all services, defaults for all services
   lbHealthCheck (Optional):
     path: /healthz # HTTP endpoint used to perform health checks on upstream service (e.g. /healthz). It expects a 200 response if the host is healthy. The upstream host can return 503 if it wants to immediately notify downstream hosts to no longer forward traffic to it.
