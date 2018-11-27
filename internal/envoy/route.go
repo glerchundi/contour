@@ -15,6 +15,8 @@ package envoy
 import (
 	"fmt"
 	"sort"
+	"strconv"
+	"strings"
 	"time"
 
 	"github.com/envoyproxy/go-control-plane/envoy/api/v2/core"
@@ -32,6 +34,7 @@ func RouteRoute(r *dag.Route, services []*dag.HTTPService) *route.Route_Route {
 		RetryPolicy:   retryPolicy(r),
 		Timeout:       timeout(r),
 		PrefixRewrite: r.PrefixRewrite,
+		Cors:          corspolicy(r.CorsPolicy),
 	}
 
 	switch len(services) {
@@ -81,6 +84,22 @@ func retryPolicy(r *dag.Route) *route.RouteAction_RetryPolicy {
 		rp.PerTryTimeout = &timeout
 	}
 	return rp
+}
+
+func corspolicy(policy *dag.CorsPolicy) *route.CorsPolicy {
+	if policy == nil {
+		return nil
+	}
+
+	return &route.CorsPolicy{
+		Enabled:          bv(true),
+		AllowOrigin:      policy.AllowOrigin,
+		AllowMethods:     strings.Join(policy.AllowMethods, ","),
+		AllowHeaders:     strings.Join(policy.AllowHeaders, ","),
+		ExposeHeaders:    strings.Join(policy.ExposeHeaders, ","),
+		MaxAge:           strconv.Itoa(policy.MaxAge),
+		AllowCredentials: bv(policy.AllowCredentials),
+	}
 }
 
 // UpgradeHTTPS returns a route Action that redirects the request to HTTPS.

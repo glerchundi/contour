@@ -91,6 +91,26 @@ spec:
       port: 9000
     # If enforceTLS is specified, allows any request to this path to serve insecure requests
     permitInsecure: true
+    # if present describes the CORS policy.
+    cors:
+      # Specifies the origins that will be allowed to do CORS requests.
+      allowOrigin:
+        - www.google.com
+        - google.com
+      # Specifies the content for the *access-control-allow-methods* header.
+      allowMethods:
+        - GET
+        - POST
+      # Specifies the content for the *access-control-allow-headers* header.
+      allowHeaders:
+        - Content-Type
+      # Specifies the content for the *access-control-expose-headers* header.
+      exposeHeaders:
+        - Content-Type
+      # Specifies the content for the *access-control-max-age* header.
+      maxAge: 86400
+      # Specifies whether the resource allows credentials.
+      allowCredentials: true
   - match: /finance
     # delegate delegates the matching route to another IngressRoute object.
     # This delegates the responsibility for /finance to the IngressRoute matching the delegate parameters

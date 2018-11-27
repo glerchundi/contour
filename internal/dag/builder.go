@@ -23,13 +23,12 @@ import (
 	"sync"
 	"time"
 
+	"github.com/envoyproxy/go-control-plane/envoy/api/v2/auth"
+	ingressroutev1 "github.com/heptio/contour/apis/contour/v1beta1"
 	"k8s.io/api/core/v1"
 	"k8s.io/api/extensions/v1beta1"
 	"k8s.io/apimachinery/pkg/util/intstr"
 	"k8s.io/client-go/tools/cache"
-
-	"github.com/envoyproxy/go-control-plane/envoy/api/v2/auth"
-	ingressroutev1 "github.com/heptio/contour/apis/contour/v1beta1"
 )
 
 // A KubernetesCache holds Kubernetes objects and associated configuration and produces
@@ -623,6 +622,7 @@ func (b *builder) processIngressRoute(ir *ingressroutev1.IngressRoute, prefixMat
 				Websocket:     route.EnableWebsockets,
 				HTTPSUpgrade:  routeEnforceTLS(enforceTLS, route.PermitInsecure),
 				PrefixRewrite: route.PrefixRewrite,
+				CorsPolicy:    corspolicy(route.CorsPolicy),
 			}
 			for _, service := range route.Services {
 				if service.Port < 1 || service.Port > 65535 {
@@ -713,6 +713,22 @@ func matchesPathPrefix(path, prefix string) bool {
 		path = path + "/"
 	}
 	return strings.HasPrefix(path, prefix)
+}
+
+// corspolicy computes the cors policy for the supplied annotations list.
+func corspolicy(policy *ingressroutev1.CorsPolicy) *CorsPolicy {
+	if policy == nil {
+		return nil
+	}
+
+	return &CorsPolicy{
+		AllowMethods:     policy.AllowMethods,
+		AllowHeaders:     policy.AllowHeaders,
+		ExposeHeaders:    policy.ExposeHeaders,
+		MaxAge:           policy.MaxAge,
+		AllowOrigin:      policy.AllowOrigin,
+		AllowCredentials: policy.AllowCredentials,
+	}
 }
 
 // Status contains the status for an IngressRoute (valid / invalid / orphan, etc)

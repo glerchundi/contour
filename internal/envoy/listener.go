@@ -63,6 +63,9 @@ func HTTPConnectionManager(routename, accessLogPath string) listener.Filter {
 						"name": sv(util.GRPCWeb),
 					}),
 					st(map[string]*types.Value{
+						"name": sv(util.CORS),
+					}),
+					st(map[string]*types.Value{
 						"name": sv(util.Router),
 					}),
 				),

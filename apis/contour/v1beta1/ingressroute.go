@@ -65,6 +65,8 @@ type Route struct {
 	PermitInsecure bool `json:"permitInsecure,omitempty"`
 	// Indicates that during forwarding, the matched prefix (or path) should be swapped with this value
 	PrefixRewrite string `json:"prefixRewrite,omitempty"`
+	// CorsPolicy defines the CORS policy.
+	CorsPolicy *CorsPolicy `json:"cors"`
 }
 
 // TCPProxy contains the set of services to proxy TCP connections.
@@ -112,6 +114,22 @@ type HealthCheck struct {
 	UnhealthyThresholdCount uint32 `json:"unhealthyThresholdCount"`
 	// The number of healthy health checks required before a host is marked healthy
 	HealthyThresholdCount uint32 `json:"healthyThresholdCount"`
+}
+
+// CorsPolicy defines a CORS policy.
+type CorsPolicy struct {
+	// Specifies the origins that will be allowed to do CORS requests.
+	AllowOrigin []string `json:"allowOrigin"`
+	// Specifies the content for the *access-control-allow-methods* header.
+	AllowMethods []string `json:"allowMethods"`
+	// Specifies the content for the *access-control-allow-headers* header.
+	AllowHeaders []string `json:"allowHeaders"`
+	// Specifies the content for the *access-control-expose-headers* header.
+	ExposeHeaders []string `json:"exposeHeaders"`
+	// Specifies the content for the *access-control-max-age* header.
+	MaxAge int `json:"maxAge"`
+	// Specifies whether the resource allows credentials.
+	AllowCredentials bool `json:"allowCredentials"`
 }
 
 // Status reports the current state of the IngressRoute

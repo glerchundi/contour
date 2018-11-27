@@ -18,10 +18,9 @@ package dag
 import (
 	"time"
 
-	"k8s.io/api/core/v1"
-
 	"github.com/envoyproxy/go-control-plane/envoy/api/v2/auth"
 	ingressroutev1 "github.com/heptio/contour/apis/contour/v1beta1"
+	"k8s.io/api/core/v1"
 )
 
 // A DAG represents a directed acylic graph of objects representing the relationship
@@ -81,6 +80,9 @@ type Route struct {
 
 	// Indicates that during forwarding, the matched prefix (or path) should be swapped with this value
 	PrefixRewrite string
+
+	// CorsPolicy specifies the CORS policy.
+	CorsPolicy *CorsPolicy
 }
 
 func (r *Route) addHTTPService(s *HTTPService) {
@@ -94,6 +96,27 @@ func (r *Route) Visit(f func(Vertex)) {
 	for _, c := range r.httpServices {
 		f(c)
 	}
+}
+
+// CorsPolicy defines a CORS policy.
+type CorsPolicy struct {
+	// Specifies the origins that will be allowed to do CORS requests.
+	AllowOrigin []string
+
+	// Specifies the content for the *access-control-allow-methods* header.
+	AllowMethods []string
+
+	// Specifies the content for the *access-control-allow-headers* header.
+	AllowHeaders []string
+
+	// Specifies the content for the *access-control-expose-headers* header.
+	ExposeHeaders []string
+
+	// Specifies the content for the *access-control-max-age* header.
+	MaxAge int
+
+	// Specifies whether the resource allows credentials.
+	AllowCredentials bool
 }
 
 // A VirtualHost represents an insecure HTTP host.
